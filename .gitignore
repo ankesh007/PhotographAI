@@ -1,3 +1,5 @@
 101_ObjectCategories
 *.npy
 Trained/
+*.jpg
+Download/
