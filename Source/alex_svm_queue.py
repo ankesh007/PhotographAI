@@ -60,7 +60,8 @@ ENQUEUE_LEFT=True
 def enqueue(sess):
   """ Iterates over our data puts small junks into our queue."""
 
-  for i in range(list_files_len):
+  sess2=tf.Session()
+  for i in range(1):
     load_data =  np.genfromtxt(DatasetFolder+list_files[i],dtype=None, delimiter=',')
     under = 0
     FLAG=True
@@ -69,7 +70,6 @@ def enqueue(sess):
     global train
     train=max
     print("Reading File",list_files[i],"started at index",i)
-    # sess=tf.Session()
     while FLAG:
 
       upper = under + download_at_a_time
@@ -107,16 +107,17 @@ def enqueue(sess):
         image_download=image_download-mean(image_download)
         image_download[:, :, 0], image_download[:, :, 2] = image_download[:, :, 2], image_download[:, :, 0]
         temp=tf.image.resize_images(image_download,[227,227])
-        image_download=tf.Session().run(temp)
+        image_download=sess2.run(temp)
         curr_data=np.concatenate((curr_data,image_download[np.newaxis,:]),axis=0)
         curr_target=np.concatenate((curr_target,[[load_data[i][1],load_data[i][2]]]),axis=0)
 
-      under=upper
+      # under=upper
       # print(curr_data.shape)
       # print(curr_target.shape)
 
       sess.run(enqueue_op, feed_dict={queue_input_data: curr_data,
                                         queue_input_target: curr_target})
+    print(list_files[i]," read**********************8")
 
   print("finished enqueueing")
   global ENQUEUE_LEFT
@@ -292,13 +293,6 @@ file_svm_model='model.sav'
 full_path_svm_model=path_svm_model+file_svm_model
 joblib.dump(svr_linear,full_path_svm_model)
 print("Saved Model")
-
-
-
-
-
-
-
 
 
 # init = tf.initialize_all_variables()
