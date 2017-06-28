@@ -82,19 +82,28 @@ def enqueue(sess):
       curr_data=np.empty([0,227,227,3])
       curr_target=np.empty([0,2])
 
-      for i in range(upper-under):
+      while (upper>under):
 
-        if (load_data[i+under][1]==0 or load_data[i+under][2]==0):
+        if (load_data[under][1]==0 or load_data[under][2]==0):
           continue
-        image_url=load_data[i+under][0]
+        image_url=load_data[under][0]
         image_url=image_url.replace("https","http")
         # working on proxy server
-        (urllib.urlretrieve(image_url,"Test.jpg"))
-		# Pulling image from URL        
-        image_download=imread("Test.jpg")
+        try:
+          (urllib.urlretrieve(image_url,"Test.jpg"))
+			# Pulling image from URL        
+        except:
+          print("download failed")
+          continue
+        try:
+          image_download=imread("Test.jpg")
+        except Exception, e:
+          print("Bad Image")
+          continue
         image_shape=image_download.shape
         if(len(image_shape)<3 or image_shape[2]!=3):
           continue
+        under=under+1
         image_download=image_download-mean(image_download)
         image_download[:, :, 0], image_download[:, :, 2] = image_download[:, :, 2], image_download[:, :, 0]
         temp=tf.image.resize_images(image_download,[227,227])
