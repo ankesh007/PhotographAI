@@ -89,10 +89,9 @@ def enqueue(sess):
         image_url=load_data[i+under][0]
         image_url=image_url.replace("https","http")
         # working on proxy server
-        print("S")
-        image_download=imread(urllib.urlopen(image_url))
-        print("E")
+        (urllib.urlretrieve(image_url,"Test.jpg"))
 		# Pulling image from URL        
+        image_download=imread("Test.jpg")
         image_shape=image_download.shape
         if(len(image_shape)<3 or image_shape[2]!=3):
           continue
