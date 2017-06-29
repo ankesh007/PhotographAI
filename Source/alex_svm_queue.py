@@ -61,7 +61,7 @@ def enqueue(sess):
   """ Iterates over our data puts small junks into our queue."""
 
   sess2=tf.Session()
-  for i in range(1):
+  for i in range(list_files_len):
     load_data =  np.genfromtxt(DatasetFolder+list_files[i],dtype=None, delimiter=',')
     under = 0
     FLAG=True
@@ -89,21 +89,23 @@ def enqueue(sess):
         image_url=load_data[under][0]
         image_url=image_url.replace("https","http")
         # working on proxy server
+        under=under+1
         try:
           (urllib.urlretrieve(image_url,"Test.jpg"))
 			# Pulling image from URL        
         except:
           print("download failed")
+          time.sleep(5)    
           continue
         try:
           image_download=imread("Test.jpg")
         except Exception, e:
           print("Bad Image")
+          time.sleep(5)
           continue
         image_shape=image_download.shape
         if(len(image_shape)<3 or image_shape[2]!=3):
           continue
-        under=under+1
         image_download=image_download-mean(image_download)
         image_download[:, :, 0], image_download[:, :, 2] = image_download[:, :, 2], image_download[:, :, 0]
         temp=tf.image.resize_images(image_download,[227,227])
@@ -117,7 +119,7 @@ def enqueue(sess):
 
       sess.run(enqueue_op, feed_dict={queue_input_data: curr_data,
                                         queue_input_target: curr_target})
-    print(list_files[i]," read**********************8")
+    print(list_files[i]," read***********************")
 
   print("finished enqueueing")
   global ENQUEUE_LEFT
